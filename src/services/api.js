@@ -1,34 +1,58 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/device-manager-api'
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 async function fetchJson(path, options = {}) {
+  console.log(`Fetching ${API_BASE_URL}${path}...`);
   const res = await fetch(`${API_BASE_URL}${path}`, {
     headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
     ...options
-  })
-  if (!res.ok) throw new Error(`HTTP ${res.status}`)
-  return res.status === 204 ? null : res.json()
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.status === 204 ? null : res.json();
 }
 
-// Historia de medidas
-export async function getSensorHistory(sensorType) {
-  // GET /sensors/:sensorType/history?limit=50
-  return fetchJson(`/sensors/${sensorType}/history?limit=50`)
+// --- Sensores de un device ---
+export async function getDeviceSensors(deviceId) {
+  // GET /devices/:deviceId/sensors
+  return fetchJson(`/devices/${deviceId}/sensors`);
 }
 
-// Medición actual
-export async function getSensorCurrent(sensorType) {
-  // GET /sensors/:sensorType/current
-  return fetchJson(`/sensors/${sensorType}/current`)
+// --- Historia de medidas (preferir por deviceId + sensorId) ---
+export async function getSensorHistory({ deviceId, sensorId, sensorType, limit = 50 }) {
+  // Si tu API expone endpoints por sensorId (recomendado):
+  if (deviceId != null && sensorId != null) {
+    return fetchJson(`/devices/${deviceId}/sensors/${sensorId}/history?limit=${limit}`);
+  }
+  // Fallback por tipo (si aún lo necesitás):
+  return fetchJson(`/sensors/${sensorType}/history?limit=${limit}`);
 }
 
-// Estado general del dispositivo
-export async function getDeviceStatus() {
-  // GET /device/status
-  return fetchJson('/device/status')
+// --- Medición actual ---
+export async function getSensorCurrent({ deviceId, sensorId, sensorType }) {
+  if (deviceId != null && sensorId != null) {
+    return fetchJson(`/devices/${deviceId}/sensors/${sensorId}/current`);
+  }
+  // Fallback por tipo:
+  return fetchJson(`/sensors/${sensorType}/current`);
 }
 
-// Healthcheck explícito
+// --- Estado general del dispositivo ---
+export async function getDeviceStatus(id) {
+  // GET /devices/:id/status
+  console.log('Getting device status for device id', id);
+  return fetchJson(`/devices/${id}/status`);
+}
+
+// --- Healthcheck explícito ---
 export async function healthcheck() {
-  // GET /health
-  return fetchJson('/health')
+  // Intentá primero /devices/health y hacé fallback a /health
+  try {
+    return await fetchJson('/devices/health');
+  } catch {
+    return fetchJson('/health');
+  }
+}
+
+export async function getDevices() {
+  // GET /devices
+  return fetchJson('/devices');
 }

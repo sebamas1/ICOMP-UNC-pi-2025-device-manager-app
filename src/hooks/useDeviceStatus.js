@@ -1,31 +1,30 @@
 import { useCallback, useEffect, useState } from 'react'
 import { getDeviceStatus, healthcheck } from '../services/api.js'
 
-export function useDeviceStatus() {
+export function useDeviceStatus(deviceId) {
   const [status, setStatus] = useState(null)
   const [loading, setLoading] = useState(false)
 
   const load = useCallback(async () => {
     setLoading(true)
     try {
-      const s = await getDeviceStatus()
+      const s = await getDeviceStatus(deviceId)
       setStatus(s)
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [deviceId])
 
   const check = useCallback(async () => {
     setLoading(true)
     try {
       const res = await healthcheck()
-      // Re-consultar estado luego del healthcheck
-      const s = await getDeviceStatus()
+      const s = await getDeviceStatus(deviceId)
       setStatus(s ?? { online: res?.ok === true })
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [deviceId])
 
   useEffect(() => { load() }, [load])
 

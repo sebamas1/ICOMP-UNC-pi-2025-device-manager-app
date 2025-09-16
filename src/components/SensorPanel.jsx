@@ -11,30 +11,84 @@ import RefreshIcon from '@mui/icons-material/Refresh'
 import BoltIcon from '@mui/icons-material/Bolt'
 import { formatDate } from '../utils/format.js'
 
-export default function SensorPanel({ title, unit, sensorType, readings, onFetchCurrent, onRefreshHistory, loading }) {
+export default function SensorPanel({
+  title,
+  unit,
+  sensorType,
+  readings,
+  onFetchCurrent,
+  onRefreshHistory,
+  loading
+}) {
   return (
-    <Paper elevation={0} sx={{ p: 2 }}>
+    <Paper
+      elevation={1}
+      sx={{
+        p: 2,
+        borderRadius: 2,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 2,
+        height: '100%',
+      }}
+    >
+      {/* Header */}
       <Stack direction="row" alignItems="center" justifyContent="space-between">
-        <Typography variant="h6">{title}</Typography>
+        <Stack>
+          <Typography variant="h6" fontWeight="bold">
+            {title}
+          </Typography>
+          <Typography variant="subtitle2" color="text.secondary">
+            {sensorType}
+          </Typography>
+        </Stack>
         <Stack direction="row" gap={1}>
-          <Button size="small" variant="outlined" startIcon={<RefreshIcon />} onClick={onRefreshHistory} disabled={loading}>
+          <Button
+            size="small"
+            variant="outlined"
+            startIcon={<RefreshIcon />}
+            onClick={onRefreshHistory}
+            disabled={loading}
+          >
             Historial
           </Button>
-          <Button size="small" variant="contained" startIcon={<BoltIcon />} onClick={onFetchCurrent} disabled={loading}>
+          <Button
+            size="small"
+            variant="contained"
+            startIcon={<BoltIcon />}
+            onClick={onFetchCurrent}
+            disabled={loading}
+          >
             Leer ahora
           </Button>
         </Stack>
       </Stack>
 
-      <Divider sx={{ my: 2 }} />
+      <Divider />
 
-      <List dense>
+      {/* Lecturas */}
+      <List dense sx={{ flex: 1, overflowY: 'auto' }}>
         {readings.length === 0 && (
-          <ListItem><ListItemText primary="Sin datos aún." /></ListItem>
+          <ListItem>
+            <ListItemText primary="Sin datos aún." />
+          </ListItem>
         )}
         {readings.map((r, idx) => (
-          <ListItem key={idx} secondaryAction={<Chip size="small" label={`${r.value} ${unit}`} />}>
-            <ListItemText primary={formatDate(r.timestamp)} secondary={r.source || sensorType} />
+          <ListItem
+            key={idx}
+            sx={{ display: 'flex', alignItems: 'center', gap: 2 }}
+          >
+            <ListItemText
+              primary={formatDate(r.timestamp)}
+              secondary={r.source || sensorType}
+            />
+            <Chip
+              size="medium"
+              color="primary"
+              variant="outlined"
+              label={`${r.value} ${unit}`}
+              sx={{ fontWeight: 'bold', minWidth: 80, textAlign: 'center' }}
+            />
           </ListItem>
         ))}
       </List>

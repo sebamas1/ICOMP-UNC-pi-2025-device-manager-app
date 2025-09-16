@@ -16,7 +16,7 @@ Dashboard simple para visualizar y consultar datos de un **ESP32** con sensores 
 ## Variables de entorno
 Copiá `.env.example` a `.env` y ajustá la URL base de la API:
 ```env
-VITE_API_BASE_URL=http://localhost:5000/device-manager-api
+VITE_API_BASE_URL=http://localhost:8080/api
 ```
 
 ## Scripts
