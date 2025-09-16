@@ -17,12 +17,12 @@ RUN npm run build
 RUN npm install -g serve
 
 # Copiar script de entrypoint y darle permisos
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+COPY entrypoint.sh entrypoint.sh
+RUN chmod +x entrypoint.sh
 
 # Exponer puerto
 EXPOSE 3000
 
 # Usamos el entrypoint que reemplaza las vars en runtime
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["entrypoint.sh"]
 CMD ["serve", "-s", "dist", "-l", "3000"]
