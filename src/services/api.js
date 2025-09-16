@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_BASE_URL = window.__RUNTIME_CONFIG__?.API_BASE_URL || "http://localhost:8080";
 
 async function fetchJson(path, options = {}) {
   console.log(`Fetching ${API_BASE_URL}${path}...`);

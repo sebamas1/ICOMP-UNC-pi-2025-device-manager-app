@@ -10,18 +10,19 @@ RUN npm ci
 # Copiamos el resto del código
 COPY . .
 
-# Variable de build para Vite o CRA
-ARG VITE_API_BASE_URL
-ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
-
-# Build de producción
+# Build de producción (ya no dependemos de VITE_API_BASE_URL)
 RUN npm run build
 
 # Instalar 'serve' para servir los archivos estáticos
 RUN npm install -g serve
 
+# Copiar script de entrypoint y darle permisos
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 # Exponer puerto
 EXPOSE 3000
 
-# Comando para servir la app
+# Usamos el entrypoint que reemplaza las vars en runtime
+ENTRYPOINT ["/entrypoint.sh"]
 CMD ["serve", "-s", "dist", "-l", "3000"]
