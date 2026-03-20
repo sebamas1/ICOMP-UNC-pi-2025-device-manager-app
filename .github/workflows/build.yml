@@ -3,7 +3,8 @@
 # - PR / push a develop → CI (tests + SonarCloud) + publicar imagen en ECR repo DEVELOP.
 # - PR / push a main → CI (tests + SonarCloud) + publicar imagen en ECR repo MAIN.
 #
-# SonarCloud: configurar en el repo Secrets (SONAR_TOKEN) y Variables (SONAR_ORGANIZATION, SONAR_PROJECT_KEY).
+# SonarCloud: Secrets (SONAR_TOKEN) + Variables (SONAR_ORGANIZATION, SONAR_PROJECT_KEY).
+# En SonarCloud del proyecto: desactivar "Automatic Analysis" si usás este workflow (CI), o falla con conflicto.
 name: CI/CD Pipeline
 
 on:
@@ -49,17 +50,13 @@ jobs:
       - name: Run tests with coverage
         run: npm run test:coverage
 
-      # SonarCloud en un solo paso (no hay "begin/end" como en .NET: el action corre el scanner completo).
+      # sonarcloud-github-action@v2 solo admite: args, projectBaseDir, entryPoint (no projectKey/organization en with).
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_ORGANIZATION: ${{ vars.SONAR_ORGANIZATION }}
-          SONAR_PROJECT_KEY: ${{ vars.SONAR_PROJECT_KEY }}
         with:
-          projectKey: ${{ vars.SONAR_PROJECT_KEY }}
-          organization: ${{ vars.SONAR_ORGANIZATION }}
           args: >
             -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY }}
             -Dsonar.organization=${{ vars.SONAR_ORGANIZATION }}
