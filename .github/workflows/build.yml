@@ -28,6 +28,9 @@ jobs:
   ci:
     name: Tests & SonarCloud
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -46,14 +49,20 @@ jobs:
       - name: Run tests with coverage
         run: npm run test:coverage
 
+      # SonarCloud en un solo paso (no hay "begin/end" como en .NET: el action corre el scanner completo).
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_ORGANIZATION: ${{ vars.SONAR_ORGANIZATION }}
+          SONAR_PROJECT_KEY: ${{ vars.SONAR_PROJECT_KEY }}
         with:
           projectKey: ${{ vars.SONAR_PROJECT_KEY }}
           organization: ${{ vars.SONAR_ORGANIZATION }}
           args: >
+            -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY }}
+            -Dsonar.organization=${{ vars.SONAR_ORGANIZATION }}
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
 
   build-and-push:
