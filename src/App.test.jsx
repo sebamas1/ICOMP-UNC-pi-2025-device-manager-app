@@ -6,10 +6,11 @@ import App from './App.jsx'
 describe('App', () => {
   it('renders without crashing', () => {
     render(
-      <MemoryRouter>
+      <MemoryRouter initialEntries={['/sensors']}>
         <App />
       </MemoryRouter>
     )
     expect(document.body).toBeTruthy()
+    expect(screen.getAllByText('Sensores').length).toBeGreaterThan(0)
   })
 })
