@@ -1,4 +1,6 @@
-const API_BASE_URL = window.__RUNTIME_CONFIG__?.API_BASE_URL || "http://localhost:8080";
+// "" es válido (mismo origen vía Ingress, p. ej. http://app.local + rutas /api/...).
+const API_BASE_URL =
+  window.__RUNTIME_CONFIG__?.API_BASE_URL ?? "http://localhost:8080";
 
 async function fetchJson(path, options = {}) {
   console.log(`Fetching ${API_BASE_URL}${path}...`);
