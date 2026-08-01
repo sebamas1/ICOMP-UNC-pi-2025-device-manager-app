@@ -29,12 +29,11 @@ export async function getSensorHistory({ deviceId, sensorId, sensorType, limit =
 }
 
 // --- Medición actual ---
-export async function getSensorCurrent({ deviceId, sensorId, sensorType }) {
+export async function getSensorCurrent({ deviceId, sensorId }) {
   if (deviceId != null && sensorId != null) {
-    return fetchJson(`/api/devices/${deviceId}/sensors/${sensorId}/current`);
+    const sensor = await fetchJson(`/api/devices/${deviceId}/sensors/${sensorId}`);
+    return { timestamp: new Date().toISOString(), value: sensor.value, source: sensor.type };
   }
-  // Fallback por tipo:
-  return fetchJson(`/api/sensors/${sensorType}/current`);
 }
 
 // --- Estado general del dispositivo ---
