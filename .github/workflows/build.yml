@@ -52,7 +52,7 @@ jobs:
 
       # sonarcloud-github-action@v2 solo admite: args, projectBaseDir, entryPoint (no projectKey/organization en with).
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v2
+        uses: SonarSource/sonarcloud-github-action@v4
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
