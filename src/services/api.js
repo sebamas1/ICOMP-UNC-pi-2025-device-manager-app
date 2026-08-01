@@ -1,4 +1,6 @@
-const API_BASE_URL = window.__RUNTIME_CONFIG__?.API_BASE_URL || "http://localhost:8080";
+// "" es válido (mismo origen vía Ingress, p. ej. http://app.local + rutas /api/...).
+const API_BASE_URL =
+  window.__RUNTIME_CONFIG__?.API_BASE_URL ?? "http://localhost:8080";
 
 async function fetchJson(path, options = {}) {
   console.log(`Fetching ${API_BASE_URL}${path}...`);
@@ -27,12 +29,11 @@ export async function getSensorHistory({ deviceId, sensorId, sensorType, limit =
 }
 
 // --- Medición actual ---
-export async function getSensorCurrent({ deviceId, sensorId, sensorType }) {
+export async function getSensorCurrent({ deviceId, sensorId }) {
   if (deviceId != null && sensorId != null) {
-    return fetchJson(`/api/devices/${deviceId}/sensors/${sensorId}/current`);
+    const sensor = await fetchJson(`/api/devices/${deviceId}/sensors/${sensorId}`);
+    return { timestamp: new Date().toISOString(), value: sensor.value, source: sensor.type };
   }
-  // Fallback por tipo:
-  return fetchJson(`/api/sensors/${sensorType}/current`);
 }
 
 // --- Estado general del dispositivo ---
