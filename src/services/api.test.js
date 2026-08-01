@@ -40,9 +40,12 @@ describe('api helpers', () => {
   })
 
   it('getSensorCurrent prefers deviceId+sensorId branch', async () => {
-    fetch.mockResolvedValueOnce({ ok: true, status: 200, json: async () => ({ value: 1 }) })
-    await getSensorCurrent({ deviceId: 1, sensorId: 2, sensorType: 'Temperature' })
-    expect(fetch).toHaveBeenCalledWith(expect.stringContaining('/api/devices/1/sensors/2/current'), expect.any(Object))
+    fetch.mockResolvedValueOnce({ ok: true, status: 200, json: async () => ({ id: 2, name: 'T1', type: 'Temperature', value: 24.32, status: 'Active' }) })
+    const out = await getSensorCurrent({ deviceId: 1, sensorId: 2, sensorType: 'Temperature' })
+    expect(fetch).toHaveBeenCalledWith(expect.stringContaining('/api/devices/1/sensors/2'), expect.any(Object))
+    expect(out.value).toBe(24.32)
+    expect(out.source).toBe('Temperature')
+    expect(out.timestamp).toBeDefined()
   })
 
   it('getDeviceStatus calls /api/devices/:id/status', async () => {
