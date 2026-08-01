@@ -50,9 +50,8 @@ jobs:
       - name: Run tests with coverage
         run: npm run test:coverage
 
-      # sonarcloud-github-action@v2 solo admite: args, projectBaseDir, entryPoint (no projectKey/organization en with).
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v4
+        uses: SonarSource/sonarqube-scan-action@v5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
